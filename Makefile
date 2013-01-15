@@ -1,4 +1,4 @@
-memoize.html: memoize.lisp memoize.asd
+memoize.html: memoize.lisp memoize.asd document
 	./document
 
 index.html: memoize.lisp memoize.html
