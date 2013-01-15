@@ -1,0 +1,150 @@
+<html> 
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>MEMOIZE - thread safe function memoization</title>
+  <style type="text/css">
+  pre { padding:5px; background-color:#e0e0e0 }
+  h3, h4 { text-decoration: underline; }
+  a { text-decoration: none; padding: 1px 2px 1px 2px; }
+  a:visited { text-decoration: none; padding: 1px 2px 1px 2px; }
+  a:hover { text-decoration: none; padding: 1px 1px 1px 1px; border: 1px solid #000000; } 
+  a:focus { text-decoration: none; padding: 1px 2px 1px 2px; border: none; }
+  a.none { text-decoration: none; padding: 0; }
+  a.none:visited { text-decoration: none; padding: 0; } 
+  a.none:hover { text-decoration: none; border: none; padding: 0; } 
+  a.none:focus { text-decoration: none; border: none; padding: 0; } 
+  a.noborder { text-decoration: none; padding: 0; } 
+  a.noborder:visited { text-decoration: none; padding: 0; } 
+  a.noborder:hover { text-decoration: none; border: none; padding: 0; } 
+  a.noborder:focus { text-decoration: none; border: none; padding: 0; }  
+  pre.none { padding:5px; background-color:#ffffff }
+  </style>
+</head>
+
+<body bgcolor=white>
+
+<h2> MEMOIZE - thread safe function memoization</h2>
+
+<br>&nbsp;<br><h3><a name=abstract class=none>Abstract</a></h3>
+
+<p>A tiny memoization library built on FLEXI-STREAMS
+    and CL-STORE. This uses implementation-specific thread safe
+    hashes to ensure thread safe memoization.</p>
+
+The code is available under the <a
+href="http://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License</a>.
+
+<p>
+<font color=red>Source:</font>
+<a href="http://github.com/eschulte/memoize">http://github.com/eschulte/memoize</a>.
+
+<br>&nbsp;<br><h3><a class=none name="contents">Contents</a></h3>
+<ol>
+  <li><a href="#source">Source</a></li>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#dictionary">The MEMOIZE dictionary</a></li>
+    <ol>
+      <li><a href="#*memoized-data*"><code>*memoized-data*</code></a></li>
+      <li><a href="#memoize"><code>memoize</code></a></li>
+      <li><a href="#un-memoize"><code>un-memoize</code></a></li>
+    </ol>
+  <li><a href="#ack">Acknowledgements</a></li>
+</ol>
+
+<br>&nbsp;<br><h3><a class=none name="source">Source</a></h3>
+
+MEMOIZE together with this documentation can be found at <a
+href="http://github.com/eschulte/memoize">http://github.com/eschulte/memoize</a>.
+
+<br>&nbsp;<br><h3><a class=none name="introduction">Introduction</a></h3>
+
+<p>This package lets the particular lisp distribution handle the
+creation of thread-safe hashes to hold memoized data, and lets
+cl-store and flexi-streams do all the heavy lifting of hashing
+arbitrary arguments.</p>
+
+<p>On these shoulders it builds a simple hashing system which is used
+to hash function output by function arguments.  The API consists of
+<code>memoize</code> which can be called to memoize a function and
+<code>un-memoize</code> which can be called to un-memoize a function. All
+saved memoized data is available through the <code>*memoized-data*</code>
+array which may be persisted using cl-store.</p>
+
+<pre><code>* (defun foo (it) (format t "~S~%" it) (random 2400))
+FOO
+* (memoize #'foo)
+#&lt;CLOSURE (LAMBDA (&amp;REST ARGS) :IN MEMOIZE) {1002BC373B}&gt;
+* (foo 2)
+2
+1324
+* (foo 2)
+1324
+* *memoized-data*
+((FOO . #&lt;HASH-TABLE :TEST EQL :COUNT 1 {1002BC3653}&gt;))
+* *memoized-functions*
+((FOO . #&lt;FUNCTION FOO {1002BAE3BB}&gt;))
+* (un-memoize 'foo)
+NIL
+* *memoized-functions*
+NIL
+* *memoized-data*
+NIL
+* (foo 2)
+2
+2147
+* (foo 2)
+2
+1573
+</code></pre>
+
+<p>Note: currently only SBCL is supported, but any other distribution
+which supports thread-safe hashes should be easy to add.</p>
+
+<br>&nbsp;<br><h3><a class=none name="dictionary">The MEMOIZE dictionary</a></h3>
+
+
+<!-- Entry for *MEMOIZED-DATA* -->
+
+<p><br>[Special variable]<br><a class=none name='*memoized-data*'><b>*memoized-data*</b></a>
+<blockquote><br>
+
+Alist of memoization hashes keyed by function name.
+
+</blockquote>
+
+<!-- End of entry for *MEMOIZED-DATA* -->
+
+
+<!-- Entry for MEMOIZE -->
+
+<p><br>[Function]<br><a class=none name='memoize'><b>memoize</b> <i>func</i> =&gt; <i>result</i></a>
+<blockquote><br>
+
+Update FUNC so all future calls are memoized.
+
+</blockquote>
+
+<!-- End of entry for MEMOIZE -->
+
+
+<!-- Entry for UN-MEMOIZE -->
+
+<p><br>[Function]<br><a class=none name='un-memoize'><b>un-memoize</b> <i>func-name</i> =&gt; <i>result</i></a>
+<blockquote><br>
+
+Un-memoize the function identified by the symbol FUNC-NAME.
+
+</blockquote>
+
+<!-- End of entry for UN-MEMOIZE -->
+
+
+<br>&nbsp;<br><h3><a class=none name="ack">Acknowledgements</a></h3>
+
+<p>
+This documentation was prepared with a hacked up version of <a href="http://weitz.de/documentation-template/">DOCUMENTATION-TEMPLATE</a>.
+</p>
+
+</body>
+</html>
