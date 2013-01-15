@@ -11,11 +11,12 @@
 ;; cl-store and flexi-streams do all the heavy lifting of hashing
 ;; arbitrary arguments.
 ;;
-;; On these shoulders it builds a simple hashing system exposed by
-;; `memoize` which can be called to memoize a function, `un-memoize`
-;; which can be called to un-memoize a function, and exposing all
-;; saved memoized data in the `*memoized-data*` array which may be
-;; persisted using cl-store.
+;; On these shoulders it builds a simple hashing system which is used
+;; to hash function output by function arguments.  The API consists of
+;; `memoize` which can be called to memoize a function and
+;; `un-memoize` which can be called to un-memoize a function. All
+;; saved memoized data is available through the `*memoized-data*`
+;; array which may be persisted using cl-store.
 ;;
 ;;     * (defun foo (it) (format t "~S~%" it) (random 2400))
 ;;     FOO
