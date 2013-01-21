@@ -80,8 +80,10 @@ Uses `cl-store:store' to hash objects.  Maybe slow for big arguments."
     (store el out)
     (sxhash (octets-to-string (get-output-stream-sequence out)))))
 
-(defun memoize (func)
-  "Update FUNC so all future calls are memoized."
+(defun memoize (func &key key)
+  "Update FUNC so all future calls are memoized.
+Optionally the output of the function specified by KEY will be used
+for hashing and equality tests in memoization."
   (let ((name (function-name func))
         (ht (thread-safe-hash-table)))
     (assert (not (assoc name *memoized-data*))
@@ -91,10 +93,15 @@ Uses `cl-store:store' to hash objects.  Maybe slow for big arguments."
     (push (cons (function-name func) ht)   *memoized-data*)
     (push (cons (function-name func) func) *memoized-functions*)
     (setf (fdefinition name)
-          (lambda (&rest args)
-            (let ((hash (sxhash-global args)))
-              (or (gethash hash ht)
-                  (setf (gethash hash ht) (apply func args))))))))
+          (if key
+              (lambda (&rest args)
+                (let ((hash (sxhash-global (funcall key args))))
+                  (or (gethash hash ht)
+                      (setf (gethash hash ht) (apply func args)))))
+              (lambda (&rest args)
+                (let ((hash (sxhash-global args)))
+                  (or (gethash hash ht)
+                      (setf (gethash hash ht) (apply func args)))))))))
 
 (defun un-memoize (func-name)
   "Un-memoize the function identified by the symbol FUNC-NAME."
