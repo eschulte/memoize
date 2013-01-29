@@ -99,8 +99,8 @@ NIL
 1573
 </code></pre>
 
-<p>Note: currently only SBCL is supported, but any other distribution
-which supports thread-safe hashes should be easy to add.</p>
+<p>Note: currently only SBCL and Clozure CL are supported, but other
+distributions w/thread-safe hashes should be easy to add.</p>
 
 <br>&nbsp;<br><h3><a class=none name="dictionary">The MEMOIZE dictionary</a></h3>
 
@@ -112,6 +112,9 @@ which supports thread-safe hashes should be easy to add.</p>
 
 Alist of memoization hashes keyed by function name.
 
+
+
+
 </blockquote>
 
 <!-- End of entry for *MEMOIZED-DATA* -->
@@ -119,10 +122,15 @@ Alist of memoization hashes keyed by function name.
 
 <!-- Entry for MEMOIZE -->
 
-<p><br>[Function]<br><a class=none name='memoize'><b>memoize</b> <i>func</i> =&gt; <i>result</i></a>
+<p><br>[Function]<br><a class=none name='memoize'><b>memoize</b> <i>func <tt>&amp;key</tt> key</i> =&gt; <i>result</i></a>
 <blockquote><br>
 
 Update FUNC so all future calls are memoized.
+Optionally the output of the function specified by KEY will be used
+for hashing and equality tests in memoization.
+
+
+
 
 </blockquote>
 
@@ -135,6 +143,9 @@ Update FUNC so all future calls are memoized.
 <blockquote><br>
 
 Un-memoize the function identified by the symbol FUNC-NAME.
+
+
+
 
 </blockquote>
 

@@ -1,3 +1,5 @@
+all: index.html
+
 memoize.html: memoize.lisp memoize.asd document
 	./document
 
