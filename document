@@ -1,4 +1,5 @@
 #!/usr/bin/sbcl --script
+;; -*- lisp -*-
 (load "~/.sbclrc" :if-does-not-exist nil)
 (require :memoize)
 (require :schulte-documentation-template)
@@ -7,6 +8,6 @@
  :target "memoize.html"
  :subtitle "thread safe function memoization"
  :abstract "A tiny memoization library built on FLEXI-STREAMS and
-    CL-STORE. This uses implementation-specific (currently only
-    supports SBLC) thread safe hashes to ensure thread safe
+    CL-STORE. This uses implementation-specific (currently supports
+    SBLC and Clozure CL) thread safe hashes to ensure thread safe
     memoization.")
