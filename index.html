@@ -122,12 +122,15 @@ Alist of memoization hashes keyed by function name.
 
 <!-- Entry for MEMOIZE -->
 
-<p><br>[Function]<br><a class=none name='memoize'><b>memoize</b> <i>func <tt>&amp;key</tt> key</i> =&gt; <i>result</i></a>
+<p><br>[Function]<br><a class=none name='memoize'><b>memoize</b> <i>func <tt>&amp;key</tt> key if-memoized</i> =&gt; <i>result</i></a>
 <blockquote><br>
 
 Update FUNC so all future calls are memoized.
-Optionally the output of the function specified by KEY will be used
-for hashing and equality tests in memoization.
+Optionally the output of the function specified by :KEY will be used
+for hashing and equality tests in memoization.  Keyword argument
+:IF-MEMOIZED may be one of :ERROR (the default) which raises an error
+if FUNC is already memoized or :REPLACE which will replace the
+memoized version of FUNC deleting any existing memoized data.
 
 
 
