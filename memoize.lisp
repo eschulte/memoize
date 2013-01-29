@@ -44,8 +44,8 @@
 ;;     2
 ;;     1573
 ;;
-;; Note: currently only SBCL is supported, but any other distribution
-;; which supports thread-safe hashes should be easy to add.
+;; Note: currently only SBCL and Clozure CL are supported, but other
+;; distributions w/thread-safe hashes should be easy to add.
 
 ;;; Code:
 (defpackage :memoize
@@ -63,14 +63,18 @@
   "Return a thread safe hash table."
   #+sbcl
   (make-hash-table :synchronized t)
-  #-(or sbcl)
+  #+ccl
+  (make-hash-table :shared :lock-free)
+  #-(or ccl sbcl)
   (error "unsupported implementation"))
 
 (defun function-name (func)
   "Return the name of FUNC."
   #+sbcl
   (sb-impl::%fun-name func)
-  #-(or sbcl)
+  #+ccl
+  (ccl::function-name func)
+  #-(or ccl sbcl)
   (error "unsupported implementation"))
 
 (defun sxhash-global (el)
@@ -80,8 +84,10 @@ Uses `cl-store:store' to hash objects.  Maybe slow for big arguments."
     (store el out)
     (sxhash (octets-to-string (get-output-stream-sequence out)))))
 
-(defun memoize (func)
-  "Update FUNC so all future calls are memoized."
+(defun memoize (func &key key)
+  "Update FUNC so all future calls are memoized.
+Optionally the output of the function specified by KEY will be used
+for hashing and equality tests in memoization."
   (let ((name (function-name func))
         (ht (thread-safe-hash-table)))
     (assert (not (assoc name *memoized-data*))
@@ -91,10 +97,15 @@ Uses `cl-store:store' to hash objects.  Maybe slow for big arguments."
     (push (cons (function-name func) ht)   *memoized-data*)
     (push (cons (function-name func) func) *memoized-functions*)
     (setf (fdefinition name)
-          (lambda (&rest args)
-            (let ((hash (sxhash-global args)))
-              (or (gethash hash ht)
-                  (setf (gethash hash ht) (apply func args))))))))
+          (if key
+              (lambda (&rest args)
+                (let ((hash (sxhash-global (funcall key args))))
+                  (or (gethash hash ht)
+                      (setf (gethash hash ht) (apply func args)))))
+              (lambda (&rest args)
+                (let ((hash (sxhash-global args)))
+                  (or (gethash hash ht)
+                      (setf (gethash hash ht) (apply func args)))))))))
 
 (defun un-memoize (func-name)
   "Un-memoize the function identified by the symbol FUNC-NAME."

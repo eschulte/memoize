@@ -1,0 +1,7 @@
+MEMOIZE - thread safe function memoization
+
+A tiny memoization library built on FLEXI-STREAMS and CL-STORE. This
+uses implementation-specific (currently only supports SBLC) thread
+safe hashes to ensure thread safe memoization.
+
+For more information see http://eschulte.github.com/memoize.
