@@ -84,16 +84,29 @@ Uses `cl-store:store' to hash objects.  Maybe slow for big arguments."
     (store el out)
     (sxhash (octets-to-string (get-output-stream-sequence out)))))
 
-(defun memoize (func &key key)
+(defun un-memoize (func-name)
+  "Un-memoize the function identified by the symbol FUNC-NAME."
+  (flet ((remove-func (alist)
+           (remove-if (lambda (pair) (eql (car pair) func-name)) alist)))
+    (setf (fdefinition func-name)
+          (cdr (assoc func-name *memoized-functions*)))
+    (setf *memoized-data* (remove-func *memoized-data*))
+    (setf *memoized-functions* (remove-func *memoized-functions*))))
+
+(defun memoize (func &key key (if-memoized :error))
   "Update FUNC so all future calls are memoized.
-Optionally the output of the function specified by KEY will be used
-for hashing and equality tests in memoization."
+Optionally the output of the function specified by :KEY will be used
+for hashing and equality tests in memoization.  Keyword argument
+:IF-MEMOIZED may be one of :ERROR (the default) which raises an error
+if FUNC is already memoized or :REPLACE which will replace the
+memoized version of FUNC deleting any existing memoized data."
   (let ((name (function-name func))
         (ht (thread-safe-hash-table)))
-    (assert (not (assoc name *memoized-data*))
-            (func *memoized-data*)
-            "Function ~S is already memoized.  To re-memoize, first un-memoize."
-            name)
+    (when (assoc name *memoized-data*)
+      (case if-memoized
+        (:error   (error "Function ~S is already memoized." name))
+        (:replace (un-memoize name))
+        (t (error "Unsupported value of :if-memoized. ~S" if-memoized))))
     (push (cons (function-name func) ht)   *memoized-data*)
     (push (cons (function-name func) func) *memoized-functions*)
     (setf (fdefinition name)
@@ -106,12 +119,3 @@ for hashing and equality tests in memoization."
                 (let ((hash (sxhash-global args)))
                   (or (gethash hash ht)
                       (setf (gethash hash ht) (apply func args)))))))))
-
-(defun un-memoize (func-name)
-  "Un-memoize the function identified by the symbol FUNC-NAME."
-  (flet ((remove-func (alist)
-           (remove-if (lambda (pair) (eql (car pair) func-name)) alist)))
-    (setf (fdefinition func-name)
-          (cdr (assoc func-name *memoized-functions*)))
-    (setf *memoized-data* (remove-func *memoized-data*))
-    (setf *memoized-functions* (remove-func *memoized-functions*))))
