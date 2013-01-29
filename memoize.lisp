@@ -44,8 +44,8 @@
 ;;     2
 ;;     1573
 ;;
-;; Note: currently only SBCL is supported, but any other distribution
-;; which supports thread-safe hashes should be easy to add.
+;; Note: currently only SBCL and Clozure CL are supported, but other
+;; distributions w/thread-safe hashes should be easy to add.
 
 ;;; Code:
 (defpackage :memoize
@@ -63,14 +63,18 @@
   "Return a thread safe hash table."
   #+sbcl
   (make-hash-table :synchronized t)
-  #-(or sbcl)
+  #+ccl
+  (make-hash-table :shared :lock-free)
+  #-(or ccl sbcl)
   (error "unsupported implementation"))
 
 (defun function-name (func)
   "Return the name of FUNC."
   #+sbcl
   (sb-impl::%fun-name func)
-  #-(or sbcl)
+  #+ccl
+  (ccl::function-name func)
+  #-(or ccl sbcl)
   (error "unsupported implementation"))
 
 (defun sxhash-global (el)
