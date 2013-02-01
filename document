@@ -10,4 +10,5 @@
  :abstract "A tiny memoization library built on FLEXI-STREAMS and
     CL-STORE. This uses implementation-specific (currently supports
     SBLC and Clozure CL) thread safe hashes to ensure thread safe
-    memoization.")
+    memoization."
+ :source "http://github.com/eschulte/memoize")
