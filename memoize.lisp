@@ -46,6 +46,8 @@
 ;;
 ;; Note: currently only SBCL and Clozure CL are supported, but other
 ;; distributions w/thread-safe hashes should be easy to add.
+;;
+;; TODO: Support memoization of generic functions (i.e., defmethod).
 
 ;;; Code:
 (defpackage :memoize
