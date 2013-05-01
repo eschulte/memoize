@@ -100,14 +100,16 @@ Uses `cl-store:store' to hash objects.  Maybe slow for big arguments."
 Optionally the output of the function specified by :KEY will be used
 for hashing and equality tests in memoization.  Keyword argument
 :IF-MEMOIZED may be one of :ERROR (the default) which raises an error
-if FUNC is already memoized or :REPLACE which will replace the
-memoized version of FUNC deleting any existing memoized data."
+if FUNC is already memoized, :IGNORE which simply returns if FUNC is
+already memoized and :REPLACE which will replace the memoized version
+of FUNC deleting any existing memoized data."
   (let ((name (function-name func))
         (ht (thread-safe-hash-table)))
     (when (assoc name *memoized-data*)
       (case if-memoized
         (:error   (error "Function ~S is already memoized." name))
         (:replace (un-memoize name))
+        (:ignore  (return-from memoize))
         (t (error "Unsupported value of :if-memoized. ~S" if-memoized))))
     (push (cons (function-name func) ht)   *memoized-data*)
     (push (cons (function-name func) func) *memoized-functions*)
