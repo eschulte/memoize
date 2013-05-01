@@ -1,0 +1,10 @@
+Notes and Tasks                                            -*- org -*-
+
+* Notes
+** The test argument enables approximate function memoization
+Most natural for continuous (sometimes called "robust") functions.
+
+See Chaudhuri et al. _Proving Programs Robust_ in FSE 2011.
+
+* Tasks [0/1]
+** TODO add a =test= keyword argument
