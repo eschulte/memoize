@@ -52,7 +52,7 @@
 ;;; Code:
 (defpackage :memoize
   (:use :cl :flexi-streams :cl-store)
-  (:export :memoize :un-memoize :*memoized-data*))
+  (:export :memoize :un-memoize :*memoized-data* :*memoized-functions*))
 (in-package :memoize)
 
 (defvar *memoized-data* nil
