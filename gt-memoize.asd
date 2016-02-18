@@ -1,4 +1,4 @@
-(defsystem :memoize
+(defsystem :gt-memoize
   :description "Function memoization."
   :version "0.0.1"
   :licence "GPL V3"
