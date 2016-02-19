@@ -50,7 +50,7 @@
 ;; TODO: Support memoization of generic functions (i.e., defmethod).
 
 ;;; Code:
-(defpackage :gt-memoize
+(defpackage :memoize
   (:use :cl :flexi-streams :cl-store)
   (:export :defun-memoized
            :memoize
@@ -58,7 +58,7 @@
            :*memoized-data*
            :*memoized-functions*))
 
-(in-package :gt-memoize)
+(in-package memoize)
 
 (defvar *memoized-data* nil
   "Alist of memoization hashes keyed by function name.")
