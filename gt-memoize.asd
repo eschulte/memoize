@@ -4,4 +4,4 @@
   :licence "GPL V3"
   :depends-on (flexi-streams cl-store)
   :components
-  ((:static-file "COPYING") (:file "memoize")))
+  ((:static-file "COPYING") (:file "gt-memoize")))

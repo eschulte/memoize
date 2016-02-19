@@ -52,7 +52,12 @@
 ;;; Code:
 (defpackage :gt-memoize
   (:use :cl :flexi-streams :cl-store)
-  (:export :memoize :un-memoize :*memoized-data* :*memoized-functions*))
+  (:export :defun-memoized
+           :memoize
+           :un-memoize
+           :*memoized-data*
+           :*memoized-functions*))
+
 (in-package :gt-memoize)
 
 (defvar *memoized-data* nil
@@ -123,3 +128,9 @@ of FUNC deleting any existing memoized data."
                 (let ((hash (sxhash-global args)))
                   (or (gethash hash ht)
                       (setf (gethash hash ht) (apply func args)))))))))
+
+(defmacro defun-memoized (fn args &body body)
+  "Define a memoized function FN with ARGS and BODY"
+  `(progn (memoize (symbol-function (defun ,fn ,args ,@body))
+                   :if-memoized :ignore)
+          ',fn))
